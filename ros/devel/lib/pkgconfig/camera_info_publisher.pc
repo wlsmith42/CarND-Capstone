@@ -1,0 +1,8 @@
+prefix=/home/student/capstone/CarND-Capstone/ros/devel
+
+Name: camera_info_publisher
+Description: Description of camera_info_publisher
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/student/capstone/CarND-Capstone/ros/devel/lib 
+Requires: 

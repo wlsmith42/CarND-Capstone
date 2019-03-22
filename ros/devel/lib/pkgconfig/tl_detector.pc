@@ -1,0 +1,8 @@
+prefix=/home/student/capstone/CarND-Capstone/ros/devel
+
+Name: tl_detector
+Description: Description of tl_detector
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/student/capstone/CarND-Capstone/ros/devel/lib 
+Requires: 

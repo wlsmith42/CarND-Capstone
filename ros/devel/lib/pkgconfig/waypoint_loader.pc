@@ -1,0 +1,8 @@
+prefix=/home/student/capstone/CarND-Capstone/ros/devel
+
+Name: waypoint_loader
+Description: Description of waypoint_loader
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/student/capstone/CarND-Capstone/ros/devel/lib 
+Requires: 
