@@ -1,0 +1,3 @@
+#Ignore build and devel folders from previous project builds
+ros/build/
+ros/devel/
