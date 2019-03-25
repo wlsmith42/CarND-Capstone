@@ -100,8 +100,26 @@ class TLDetector(object):
             int: index of the closest waypoint in self.waypoints
 
         """
-        #TODO implement
-        return 0
+        if self.waypoints is None:
+	    return 0
+
+	min_dist = 9999
+	min_loc = None
+
+	x_pos = pose.position.x
+	y_pos = pose.position.y
+
+	for i, waypoint in  enumerate(self.waypoints):
+	    x_wp = waypoint.pose.pose.position.x
+	    y_wp = waypoint.pose.pose.position.y
+
+	    dist = math.sqrt((x_pos - x_wp)**2 + (y_pos - y_wp)**2)
+
+	    if dist < min_dist:
+	        min_dist = dist
+	        min_loc = i
+
+        return min_loc
 
     def get_light_state(self, light):
         """Determines the current color of the traffic light
@@ -132,18 +150,38 @@ class TLDetector(object):
 
         """
         light = None
+	closest_ls_wp = None
+	dist_to_light = 9999
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
         if(self.pose):
             car_position = self.get_closest_waypoint(self.pose.pose)
+	else:
+	    return -1, TrafficLight.UNKOWN
+
 
         #TODO find the closest visible traffic light (if one exists)
+	for stop_line_position in stop_line_positions:
+	    sl_pose = Pose()
+	    sl_pose.x = stop_line_position[0]
+	    sl_pose.y = stop_line_position[1]
 
-        if light:
+	    ls_wp = get_closest_waypoint(sl_pose)
+	    if ls_wp <= car_position:
+
+	        if closest_ls_wp is None or ls_wp < closest_ls_wp:
+	 	    closest_ls_wp = ls_wp
+		    light = sl_pose
+
+	if car_position is not None and closest_ls_wp is not None:
+	    dist_to_light = abs(car_position - closest_ls_wp)
+
+
+        if light and dist_to_light < 100:
             state = self.get_light_state(light)
             return light_wp, state
-        self.waypoints = None
+
         return -1, TrafficLight.UNKNOWN
 
 if __name__ == '__main__':
