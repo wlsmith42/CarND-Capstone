@@ -6,6 +6,7 @@ from styx_msgs.msg import Lane, Waypoint
 from scipy.spatial import KDTree
 
 import math
+import numpy as np
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -54,7 +55,7 @@ class WaypointUpdater(object):
                 self.publish_waypoints(closest_waypoint_idx)
             rate.sleep()
 
-    def get_closets_waypoint_idx():
+    def get_closest_waypoint_idx(self):
         # Get the coordinates of our car
         x = self.pose.pose.position.x
         y = self.pose.pose.position.y
@@ -62,7 +63,7 @@ class WaypointUpdater(object):
         closest_idx = self.waypoint_tree.query([x, y], 1)[1]
 
         # Check if closest is ahead or behind vehicle
-        closest_coord = self.waypoints_2s[closest_idx]
+        closest_coord = self.waypoints_2d[closest_idx]
         prev_coord = self.waypoints_2d[closest_idx - 1]
 
         # Equation for hyperplane through closest_coords
@@ -76,7 +77,7 @@ class WaypointUpdater(object):
 
         return closest_idx
 
-    def publish_waypoint(self, closest_idx):
+    def publish_waypoints(self, closest_idx):
         lane = Lane() # Create a new Lane object
         lane.header = self.base_waypoints.header
         lane.waypoints = self.base_waypoints.waypoints[closest_idx:closest_idx + LOOKAHEAD_WPS]
