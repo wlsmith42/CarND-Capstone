@@ -86,7 +86,14 @@ class WaypointUpdater(object):
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
-        pass
+	#Get the basic waypoints from waypoint loader.This action only need to be done once
+        self.base_waypoints = waypoints
+	
+	#Got 2d waypoints from 3d waypoints
+        if not self.waypoints_2d:
+             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
+             self.waypoint_tree = KDTree(self.waypoints_2d)
+		
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
