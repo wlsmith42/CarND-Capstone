@@ -19,6 +19,35 @@ def load_graph(graph_file):
             tf.import_graph_def(od_graph_def, name='')
     return graph
 
+def create_feature(rgb_image):
+    
+    ## Convert image to HSV color space
+    hsv = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2HSV)
+    
+    ## Create and return a feature value and/or vector
+    brightness_channel = hsv[:,:,2]
+    rows = brightness_channel.shape[0]
+    cols = brightness_channel.shape[1]
+    mid = int(cols/2)
+    
+    red_region = brightness_channel[:int(rows/3),(mid-10):(mid+10)]
+    yellow_region = brightness_channel[int(rows/3):int(2*rows/3),(mid-10):(mid+10)]
+    green_region = brightness_channel[int(2*rows/3):,(mid-10):(mid+10)]
+    
+    feature = [0,0,0]
+    feature[0] = np.mean(green_region)
+    feature[1] = np.mean(red_region)
+    feature[2] = np.mean(yellow_region)
+    
+    return feature
+
+def predictTrafficClass(traffic_img):
+    standard_im = cv2.resize(np.copy(traffic_img), (32, 32))
+    rgb_image = cv2.cvtColor(standard_im, cv2.COLOR_BGR2RGB)
+    max_index = np.argmax(create_feature(rgb_image))
+
+    return max_index + 1.
+
 def detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_classes,num_detections,img_path,min_score_thresh):
     image = Image.open(img_path)
     (im_width, im_height) = image.size
@@ -32,6 +61,7 @@ def detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_class
     # in my inference db, 2 refers to unknown
     classes[classes == 2.] = 4.
 
+    print(classes.shape)
     # crop the traffic image
     for i in range(boxes.shape[1]):
         if scores[0,i] > min_score_thresh:
@@ -39,9 +69,11 @@ def detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_class
             xmin = int(boxes[0,i,1]*im_width)
             ymax = int(boxes[0,i,2]*im_height)
             xmax = int(boxes[0,i,3]*im_width)
-            traffic_img = image_np[ymin:ymax,xmin:xmax]
-            cv2.imshow("ImageTraffic", cv2.cvtColor(traffic_img, cv2.COLOR_BGR2RGB))
-            cv2.waitKey(0)
+
+            # for efficiency, I only process images which have high confidence score
+            if ((ymax - ymin) * (xmax - xmin)) >= 1024:
+                traffic_img = image_np[ymin:ymax,xmin:xmax]
+                classes[0,i] = predictTrafficClass(traffic_img)
         else:
             break
 
