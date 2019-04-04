@@ -88,18 +88,23 @@ class TLDetector(object):
         
         if light_wp == -1 and state == TrafficLight.UNKNOWN:
             return
+        try:
+	    if self.state != state:
+                self.state_count = 0
+                self.state = state
+            elif self.state_count >= STATE_COUNT_THRESHOLD:
+                self.last_state = self.state
+                light_wp = light_wp if state == TrafficLight.RED else -1
+                self.last_wp = light_wp
+                self.upcoming_red_light_pub.publish(Int32(light_wp))
+            else:
+                self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+            self.state_count += 1
+
+	except AttributeError:
+	    print "tl_detector still loading..."
+	    return
         
-        if self.state != state:
-            self.state_count = 0
-            self.state = state
-        elif self.state_count >= STATE_COUNT_THRESHOLD:
-            self.last_state = self.state
-            light_wp = light_wp if state == TrafficLight.RED else -1
-            self.last_wp = light_wp
-            self.upcoming_red_light_pub.publish(Int32(light_wp))
-        else:
-            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-        self.state_count += 1
 
     def get_closest_waypoint(self, pose):
         """Identifies the closest path waypoint to the given position
@@ -129,16 +134,23 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        if(not self.has_image):
+	if(not self.has_image):
             self.prev_light_loc = None
             return False
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
-        classification = self.light_classifier.get_classification(cv_image)
+	try:
+            classification = self.light_classifier.get_classification(cv_image)
 
-        #Get classification
+	except AttributeError:
+	    print "tl_classifier still loading..."
+	    return False
+
+	#Get classification
         return classification
+
+       
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
