@@ -6,7 +6,7 @@ Self-Driving Car Engineer Nanodegree Program
 
 The goals / steps of this project are to write ROS nodes to implement the core functionality of an autonomous vehicle system including:
 
-* Perception through Trafflic Light Detection
+* Perception through Traffic Light Detection
 * Vehicle Control using Drive-by-Wire Systems
 * Path Planning by Updating and Following Waypoints
 
@@ -16,7 +16,7 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 
 ---
 
-
+ 
 ## The Team
 
 * [Weston Smith](https://github.com/wlsmith42) - Team Lead, Traffic Light Detector, Traffic Light Classifier ROS Interface.
@@ -33,7 +33,7 @@ The following image shows the architecture for Carla, Udacity's self driving car
 ![alt text][image1]
 
 ### Perception
-The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is recieved it calcualtes if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processes at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is appraching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
+The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is received it calculates if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processes at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is approaching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
 
 [TODO: Classifier]
 
@@ -41,7 +41,7 @@ The perception subsystem consists of the traffic light detector and traffic ligh
 
 [TODO: Waypoint Updater]
 
-### Contorl
+### Control
 
 [TODO: DBW]
 
