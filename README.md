@@ -1,6 +1,55 @@
-This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
+# Programming an Autonomous Vehicle
+Self-Driving Car Engineer Nanodegree Program
 
-Please use **one** of the two installation options, either native **or** docker installation.
+---
+[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+
+The goals / steps of this project are to write ROS nodes to implement the core functionality of an autonomous vehicle system including:
+
+* Perception through Trafflic Light Detection
+* Vehicle Control using Drive-by-Wire Systems
+* Path Planning by Updating and Following Waypoints
+
+[//]: # (Image References)
+
+[image1]: ./imgs/ros_architecture.png "ros_arch"
+
+---
+
+
+## The Team
+
+* [Weston Smith](https://github.com/wlsmith42) - Team Lead, Traffic Light Detector, Traffic Light Classifier ROS Interface.
+* [Derza Arsad](https://github.com/derzaarsad) - [Traffic Light Classifier]
+* [Senlin Wang](https://github.com/wangsenlinautonomous) - [Waypoint Updater]
+* [Yumie Minakami](https://github.com/yminakami) - [Waypoint Updater]
+* [Yasser Abdallah](https://github.com/yasserabdallah4) - [Drive by Wire]
+* [Michael Karg](https://github.com/micjey) - [Drive by Wire]
+
+
+## Project Introduction
+
+The following image shows the architecture for Carla, Udacity's self driving car. In this project, we were focused on implementing three ROS nodes across three vehicle subsystems: Traffic Light Detection, Waypoint Updater, and DBW. The tasks related to each vehicle subsystem are explained in more detail below.
+![alt text][image1]
+
+### Perception
+The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is recieved it calcualtes if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processes at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is appraching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
+
+[TODO: Classifier]
+
+### Planning
+
+[TODO: Waypoint Updater]
+
+### Contorl
+
+[TODO: DBW]
+
+## Results
+
+[TODO: Results]
+
+## Basic Build Instructions
 
 ### Native Installation
 
