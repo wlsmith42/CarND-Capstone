@@ -71,7 +71,7 @@ class Controller(object):
 	brake = min(brake,self.max_brake_torque)
 	brake = max(0.0, brake)
 
-	brake = self.brake_lpf.filt(brake)
+    #brake = self.brake_lpf.filt(brake)
 
 
         return throttle, brake, steering
