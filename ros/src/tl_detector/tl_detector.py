@@ -9,6 +9,7 @@ from cv_bridge import CvBridge
 from light_classification.tl_classifier import TLClassifier
 from scipy.spatial import KDTree
 import tf
+import tensorflow
 import cv2
 import yaml
 
@@ -43,11 +44,15 @@ class TLDetector(object):
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
-        self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
-        self.listener = tf.TransformListener()
+        graph_file = '../../../models/test_frozen_inference_graph_sim.pb'
+        self.graph = tensorflow.Graph()
 
-        self.state = None 
+        self.bridge = CvBridge()
+        self.light_classifier = TLClassifier(self.graph, graph_file)
+        self.listener = tf.TransformListener()
+        self.sess = tensorflow.Session(graph=self.graph)
+
+        self.state = None
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
@@ -85,11 +90,11 @@ class TLDetector(object):
         of times till we start using it. Otherwise the previous stable state is
         used.
         '''
-        
+
         if light_wp == -1 and state == TrafficLight.UNKNOWN:
             return
         try:
-	    if self.state != state:
+            if self.state != state:
                 self.state_count = 0
                 self.state = state
             elif self.state_count >= STATE_COUNT_THRESHOLD:
@@ -101,10 +106,10 @@ class TLDetector(object):
                 self.upcoming_red_light_pub.publish(Int32(self.last_wp))
             self.state_count += 1
 
-	except AttributeError:
-	    print "tl_detector still loading..."
-	    return
-        
+        except AttributeError:
+            print "tl_detector still loading..."
+            return
+
 
     def get_closest_waypoint(self, pose):
         """Identifies the closest path waypoint to the given position
@@ -116,7 +121,7 @@ class TLDetector(object):
             int: index of the closest waypoint in self.waypoints
 
         """
-        
+
         min_loc = -1
 
         if pose is not None and self.waypoint_tree is not None:
@@ -140,17 +145,17 @@ class TLDetector(object):
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
-	try:
-            classification = self.light_classifier.get_classification(cv_image)
+        try:
+            classification = self.light_classifier.get_classification(self.sess, cv_image)
 
-	except AttributeError:
-	    print "tl_classifier still loading..."
-	    return False
+        except AttributeError:
+            print "tl_classifier still loading..."
+            return False
 
-	#Get classification
+        #Get classification
         return classification
 
-       
+
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -169,7 +174,7 @@ class TLDetector(object):
 
             return -1, TrafficLight.UNKNOWN
 
-        
+
         light = None
         closest_ls_wp = None
         dist_to_light = 9999
