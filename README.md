@@ -19,12 +19,12 @@ The goals / steps of this project are to write ROS nodes to implement the core f
  
 ## The Team
 
-* [Weston Smith](https://github.com/wlsmith42) - Team Lead, Traffic Light Detector, Traffic Light Classifier ROS Interface.
-* [Derza Arsad](https://github.com/derzaarsad) - [Traffic Light Classifier]
-* [Senlin Wang](https://github.com/wangsenlinautonomous) - [Waypoint Updater]
-* [Yumie Minakami](https://github.com/yminakami) - [Waypoint Updater]
-* [Yasser Abdallah](https://github.com/yasserabdallah4) - [Drive by Wire]
-* [Michael Karg](https://github.com/micjey) - [Drive by Wire]
+* [Weston Smith](weston.smith42@gmail.com) - Team Lead, Traffic Light Detector, Traffic Light Classifier ROS Interface.
+* [Derza Arsad](derza.arsad@yahoo.com) - [Traffic Light Classifier]
+* [Senlin Wang](senlin.007@163.com) - [Waypoint Updater]
+* [Yumie Minakami](mk66.yumie@gmail.com) - [Waypoint Updater]
+* [Yasser Abdallah](yasser.abdallah4@gmail.com) - [Drive by Wire]
+* [Michael Karg](micjey@gmx.de) - [Drive by Wire]
 
 
 ## Project Introduction
