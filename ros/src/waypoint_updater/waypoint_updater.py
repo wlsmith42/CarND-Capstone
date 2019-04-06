@@ -24,7 +24,7 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 30 # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 50 # Number of waypoints we will publish. You can change this number
 MAX_DECEL = 1.0
 MPS2MPH = 2.236936
 SAFETY_FACTOR = 0.90
@@ -84,13 +84,13 @@ class WaypointUpdater(object):
     def publish_waypoints(self, closest_idx):
         lane = Lane() # Create a new Lane object
         lane.header = self.base_waypoints.header
-        
-        #Consider deceleration conditions	
+
+        #Consider deceleration conditions
         if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= closest_idx + LOOKAHEAD_WPS):
             lane.waypoints = self.base_waypoints.waypoints[closest_idx:closest_idx + LOOKAHEAD_WPS]
         else:
-            lane.waypoints = self.decelerate_waypoints(waypoints, closest_idx)
-		
+            lane.waypoints = self.decelerate_waypoints(lane.waypoints, closest_idx)
+
         self.final_waypoints_pub.publish(lane)
 
     def pose_cb(self, msg):
@@ -100,7 +100,7 @@ class WaypointUpdater(object):
         # TODO: Implement
         #Get the basic waypoints from waypoint loader.This action only need to be done once
         self.base_waypoints = waypoints
-	
+
         #Got 2d waypoints from 3d waypoints
         if not self.waypoints_2d:
              self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
