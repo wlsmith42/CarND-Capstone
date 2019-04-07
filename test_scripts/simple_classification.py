@@ -78,14 +78,14 @@ def detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_class
 
     return (boxes, scores, classes, num, image)
 
-detection_graph = load_graph(r'../models/frozen_inference_graph_traffic_130.pb')
+detection_graph = load_graph(r'../models/frozen_inference_graph_real_merged_130.pb')
 
 label_map = label_map_util.load_labelmap(r'../data/merged_label_map.pbtxt')
 categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=13, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
 print(category_index)
 
-test_images = glob(os.path.join(r'../data/test_simcapstone', r'*.jpg'))
+test_images = glob(os.path.join(r'../data/test_real', r'*.jpg'))
 min_score_thresh=.5
 
 with detection_graph.as_default():

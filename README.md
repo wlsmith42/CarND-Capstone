@@ -14,6 +14,12 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 
 [image1]: ./imgs/ros_architecture.png "ros_arch"
 
+[//]: # (References)
+[alex lechner dataset]: https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0
+[micjey dataset]: https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit
+[Michael Karg]: https://github.com/micjey/CarND-Capstone
+[Object Detection Lab]: https://github.com/udacity/CarND-Object-Detection-Lab
+[SSD Inception V2 COCO 2017/11/17]: http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz
 ---
 
  
@@ -35,7 +41,14 @@ The following image shows the architecture for Carla, Udacity's self driving car
 ### Perception
 The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is received it calculates if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processes at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is approaching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
 
-[TODO: Classifier]
+For the classification we trained separate networks for the detection on the simulated data and also the real data. The following data are used for the trainings:
+
+1. For real data: [dataset sdcnd capstone][micjey dataset], we've got the data from our colleague [Michael Karg]
+2. For simulated data: [Dataset from Alex Lechner][alex lechner dataset], please check his repository on https://github.com/alex-lechner
+
+We used SSD network which is recommended by [Object Detection Lab] the version that we used is [SSD Inception V2 COCO 2017/11/17].
+
+At first we tried to do the normal way in which the outputs of the network are 3 classes: Green, Red, Yellow, however we noticed that the classification was very bad, even for detection on the training data itself. [TODO]...
 
 ### Planning
 
