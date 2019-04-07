@@ -48,11 +48,10 @@ def predictTrafficClass(traffic_img):
 
     return max_index + 1.
 
-def detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_classes,num_detections,img_path,min_score_thresh):
-    image = Image.open(img_path)
-    (im_width, im_height) = image.size
-    image_np = np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8) # load image into numpy array
-    image_expanded = np.expand_dims(image_np, axis=0)
+def detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_classes,num_detections,bgr_img,min_score_thresh):
+    image = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2RGB)
+    im_height, im_width, channels = image.shape
+    image_expanded = np.expand_dims(image, axis=0)
 
     (boxes, scores, classes, num) = sess.run(
         [detect_boxes, detect_scores, detect_classes, num_detections],
@@ -72,12 +71,12 @@ def detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_class
 
             # for efficiency, I only process images which have high confidence score
             if ((ymax - ymin) * (xmax - xmin)) >= 1024:
-                traffic_img = image_np[ymin:ymax,xmin:xmax]
+                traffic_img = image[ymin:ymax,xmin:xmax]
                 classes[0,i] = predictTrafficClass(traffic_img)
         else:
             break
 
-    return (boxes, scores, classes, num, image_np)
+    return (boxes, scores, classes, num, image)
 
 detection_graph = load_graph(r'../models/frozen_inference_graph_traffic_130.pb')
 
@@ -86,7 +85,7 @@ categories = label_map_util.convert_label_map_to_categories(label_map, max_num_c
 category_index = label_map_util.create_category_index(categories)
 print(category_index)
 
-test_images = glob(os.path.join(r'../data/test_sim', r'*.jpg'))
+test_images = glob(os.path.join(r'../data/test_simcapstone', r'*.jpg'))
 min_score_thresh=.5
 
 with detection_graph.as_default():
@@ -98,7 +97,8 @@ with detection_graph.as_default():
         num_detections = detection_graph.get_tensor_by_name('num_detections:0')
         
         for idx, img_path in enumerate(test_images):
-            (boxes, scores, classes, num, image_np) = detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_classes,num_detections,img_path,min_score_thresh)
+            bgr_img = cv2.imread(img_path) # bgr
+            (boxes, scores, classes, num, image_np) = detectTrafficLight(sess,image_tensor,detect_boxes,detect_scores,detect_classes,num_detections,bgr_img,min_score_thresh)
             
             print('Probabilities')
             print(scores[0])
