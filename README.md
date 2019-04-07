@@ -13,8 +13,6 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 [//]: # (Image References)
 
 [image1]: ./imgs/ros_architecture.png "ros_arch"
-
-[//]: # (References)
 [alex lechner dataset]: https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0
 [micjey dataset]: https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit
 [Michael Karg]: https://github.com/micjey/CarND-Capstone
