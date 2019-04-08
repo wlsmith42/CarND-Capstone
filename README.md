@@ -10,9 +10,9 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 * Vehicle Control using Drive-by-Wire Systems
 * Path Planning by Updating and Following Waypoints
 
-[//]: # (Image References)
+#[//]: # (Image References)
 
-[image1]: ./imgs/ros_architecture.png "ros_arch"
+#[image1]: ./imgs/ros_architecture.png "ros_arch"
 ---
 
  
@@ -29,7 +29,8 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 ## Project Introduction
 
 The following image shows the architecture for Carla, Udacity's self driving car. In this project, we were focused on implementing three ROS nodes across three vehicle subsystems: Traffic Light Detection, Waypoint Updater, and DBW. The tasks related to each vehicle subsystem are explained in more detail below.
-![alt text][image1]
+
+![ros_arch](imgs/ros_architecture.png)
 
 ### Perception
 The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is received it calculates if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processes at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is approaching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
