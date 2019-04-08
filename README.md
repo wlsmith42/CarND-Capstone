@@ -41,7 +41,11 @@ For the classification we trained separate networks for the detection on the sim
 
 We used SSD network which is recommended by [Object Detection Lab](https://github.com/udacity/CarND-Object-Detection-Lab) the version that we used is [SSD Inception V2 COCO 2017/11/17](http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz).
 
-At first we tried to do the normal way in which the outputs of the network are 3 classes: Green, Red, Yellow, however we noticed that the classification was very bad, even for detection on the training data itself. [TODO]...
+At first we tried to do the normal way in which the outputs of the network consist of 3 classes: Green, Red, Yellow, however we noticed that the classification was very bad, even for detection on the training data itself. From this result we have created some thought:
+
+1. By splitting the output into 3 classes means that the detector could be more prone to error caused by a bad training data distribution, therefore it is in our opinion better to focus on only detecting where the traffic light is and let other classifier detect the color of the traffic light. In this case the proportion of unique training data in a class is also increased a lot, because we can merge all the green, red and yellow data into a single traffic light class.
+2. After we successfully identify the traffic light, we use a simple image processing to detect its color. First of all, the traffic images are cropped and resized to 32 by 32 pixels based on the detected position from the SSD network. Then the images are masked based on the hsv color and only the brightness channel is taken. After that, the image is splitted into 3 regions from top to the bottom (red, yellow, green). Some regions on the right and left sides are cropped to eliminate the background from the feature calculation. The calculated feature is the mean of brightness from each region where the region with the biggest mean is the region where the light is on. The followings are the image from HSV channels.
+![alt text](./traffic_hsv.png)
 
 ### Planning
 
