@@ -13,11 +13,11 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 [//]: # (Image References)
 
 [image1]: ./imgs/ros_architecture.png "ros_arch"
-[alex lechner dataset]: https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0
-[micjey dataset]: https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit
-[Michael Karg]: https://github.com/micjey/CarND-Capstone
-[Object Detection Lab]: https://github.com/udacity/CarND-Object-Detection-Lab
-[SSD Inception V2 COCO 2017/11/17]: http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz
+[alex lechner dataset]: https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0 ""
+[micjey dataset]: https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit ""
+[Michael Karg]: https://github.com/micjey/CarND-Capstone ""
+[Object Detection Lab]: https://github.com/udacity/CarND-Object-Detection-Lab ""
+[SSD Inception V2 COCO 2017/11/17]: http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz ""
 ---
 
  
