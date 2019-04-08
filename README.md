@@ -15,7 +15,7 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 
 ## The Team
 
-###Weston Smith
+### Weston Smith
 
 * Project Contributions: Team Lead, Traffic Light Detector, Traffic Light Classifier ROS Interface.
 
@@ -23,7 +23,7 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 
 * Email: wlsmith42@students.tntech.edu
 
-###Derza Arsad
+### Derza Arsad
 
 * Project Contributions: Traffic Light Classifier
 
@@ -32,7 +32,7 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 * Email: derza.arsad@yahoo.com
 
 
-###Senlin Wang
+### Senlin Wang
 
 * Project Contributions: Waypoint Updater
 
@@ -40,7 +40,7 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 
 * Email: senlin.007@163.com
 
-###Yumie Minakami
+### Yumie Minakami
 
 * Project Contributions: Waypoint Updater
 
@@ -48,7 +48,7 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 
 * Email: mk66.yumie@gmail.com
 
-###Yasser Abdallah
+### Yasser Abdallah
 
 * Project Contributions: Drive-by-Wire
 
