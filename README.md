@@ -13,17 +13,52 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 [//]: # (Image References)
 
 [image1]: ./imgs/ros_architecture.png "ros_arch"
+[image2]: ./imgs/sim.gif "sim"
 ---
 
  
 ## The Team
 
-* [Weston Smith](weston.smith42@gmail.com) - Team Lead, Traffic Light Detector, Traffic Light Classifier ROS Interface.
-* [Derza Arsad](derza.arsad@yahoo.com) - [Traffic Light Classifier]
-* [Senlin Wang](senlin.007@163.com) - [Waypoint Updater]
-* [Yumie Minakami](mk66.yumie@gmail.com) - [Waypoint Updater]
-* [Yasser Abdallah](yasser.abdallah4@gmail.com) - [Drive by Wire]
-* [Michael Karg](micjey@gmx.de) - [Drive by Wire]
+###Weston Smith
+
+* Project Contributions: Team Lead, Traffic Light Detector, Traffic Light Classifier ROS Interface.
+
+* Github: [wlsmith42](https://github.com/wlsmith42)
+
+* Email: wlsmith42@students.tntech.edu
+
+###Derza Arsad
+
+* Project Contributions: Traffic Light Classifier
+
+* Github: [derzaarsad](https://github.com/derzaarsad)
+
+* Email: derza.arsad@yahoo.com
+
+
+###Senlin Wang
+
+* Project Contributions: Waypoint Updater
+
+* Github: [wangsenlinautonomous](https://github.com/wangsenlinautonomous)
+
+* Email: senlin.007@163.com
+
+###Yumie Minakami
+
+* Project Contributions: Waypoint Updater
+
+* Github: [yminakami](https://github.com/yminakami)
+
+* Email: mk66.yumie@gmail.com
+
+###Yasser Abdallah
+
+* Project Contributions: Drive-by-Wire
+
+* Github: [yasserabdallah4](https://github.com/yasserabdallah4)
+
+* Email: yasser.abdallah4@gmail.com
 
 
 ## Project Introduction
@@ -32,24 +67,25 @@ The following image shows the architecture for Carla, Udacity's self driving car
 ![alt text][image1]
 
 ### Perception
-The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is received it calculates if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processes at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is approaching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
+The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is received it calculates if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processed at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is approaching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
 
 For the classification we trained separate networks for the detection on the simulated data and also the real data. The following data are used for the trainings:
 
 1. For real data: [dataset sdcnd capstone](https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit), we've got the data from our colleague [Michael Karg](https://github.com/micjey/CarND-Capstone)
-2. For simulated data: [Dataset from Alex Lechner](https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0), please check his repository on https://github.com/alex-lechner
+2. For simulated data: [Dataset from Alex Lechner](https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0), please check his repository at [alex-lechner](https://github.com/alex-lechner).
 
 We used SSD network which is recommended by [Object Detection Lab](https://github.com/udacity/CarND-Object-Detection-Lab) the version that we used is [SSD Inception V2 COCO 2017/11/17](http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz).
 
-At first we tried to do the normal way in which the outputs of the network are 3 classes: Green, Red, Yellow, however we noticed that the classification was very bad, even for detection on the training data itself. [TODO]...
+At first we tried to do the normal way in which the outputs of the network are 3 classes: Green, Red, Yellow, however we noticed that the classification was very bad, even for detection on the training data itself. 
 
 ### Planning
 
-Planning section contains waypoint loader and waypoint updater node. Waypoint loader is provided by Autoware, so in the project we only focus on waypoint updater part.
+The planning section contains waypoint loader and waypoint updater node. The waypoint loader is provided by Autoware, so in the project we only focus on waypoint updater part.
 
 The basic idea of waypoint updater is to get position information from current_pose topic and get basic waypoints information from base_waypoint topic then publish final waypoint to final_waypoint topic accordingly. Also waypoint updater can consider traffic light and obstacle situations
 
 So waypoint updater contains the following items:
+
 * Get position information
 * Get basic waypoint information
 * Get traffic light information
@@ -66,7 +102,7 @@ Now I'd like to go deeper to some subcomponents of waypoint updater
 
 #### Get position information
 
-Declare a subscriber to subscribe current_pose topic, then using a call back function to get positionning information.
+Declare a subscriber to subscribe current_pose topic, then using a call back function to get positioning information.
 For more information please see the attached code:
 
 ```
@@ -74,7 +110,7 @@ For more information please see the attached code:
 # Also declare a pose_cb call back function to do some post processing work after receiving the topic
 rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
 
-# Define a call back fuction to init pose variable when receiving current_pos topic
+# Define a call back function to init pose variable when receiving current_pos topic
 def pose_cb(self, msg):
         self.pose = msg
 ```
@@ -83,6 +119,7 @@ def pose_cb(self, msg):
 
 Declare a subscriber to subscribe base_waypoints topic, then using  a call back function to get base waypoint information.
 Then transfer waypoints from 3D to 2D
+
 ```
 from scipy.spatial import KDTree
 
@@ -103,6 +140,7 @@ def waypoints_cb(self, waypoints):
 #### Get traffic light information
 
 Declare a subscriber to subscribe traffic_waypoint topic, then using a call back function to get the index of stop line. Well prepared for deceleration waypoint topic.
+
 ```
 rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
 
@@ -118,7 +156,7 @@ The purpose of deceleration waypoints function is to decelerate the vehicle unti
 For this purpose we only need to update the vehicle speed(twist.linear) of the each waypoints.
 In the case, we will create a new waypoint list to update the vehicle speed, otherwise it will over write the original vehicle speed, then the behavior of the vehicle can be strange in the following loops.
 
-Also to get a smooth vehicle speed is quite important. we use "vel = math.sqrt(2 * MAX_DECEL * SAFETY_FACTOR * dist)" to calculate the velocity according to dist. The result is showing in the following pic:
+Also to get a smooth vehicle speed is quite important. we use `vel = math.sqrt(2 * MAX_DECEL * SAFETY_FACTOR * dist)` to calculate the velocity according to dist. The result is showing in the following pic:
 
 <img src="https://user-images.githubusercontent.com/40875720/55624827-a4728880-57d9-11e9-911e-08ea61ea5bd4.PNG" width="400">
 
@@ -151,19 +189,20 @@ def decelerate_waypoints(self, waypoints, closest_idx):
 
 In computer science, a k-d tree (short for k-dimensional tree) is a space-partitioning data structure for organizing points in a k-dimensional space. k-d trees are a useful data structure for several applications, such as searches involving a multidimensional search key (e.g. range searches and nearest neighbor searches). k-d trees are a special case of binary space partitioning trees.
 
-Basically, it contains two parts: Build and Search. In our case, I use "self.waypoint_tree = KDTree(self.waypoints_2d)" function to build KD tree, use "waypoint_tree.query([x, y], 1)[1]" function to search.
+Basically, it contains two parts: Build and Search. In our case, I use `self.waypoint_tree = KDTree(self.waypoints_2d)` function to build KD tree, use `waypoint_tree.query([x, y], 1)[1]` function to search.
 
 Find more information in the following links:
 
-https://baike.baidu.com/item/kd-tree/2302515?fr=aladdin
+[https://baike.baidu.com/item/kd-tree/2302515?fr=aladdin](https://baike.baidu.com/item/kd-tree/2302515?fr=aladdin)
 
-https://en.wikipedia.org/wiki/K-d_tree
+[https://en.wikipedia.org/wiki/K-d_tree](https://en.wikipedia.org/wiki/K-d_tree)
 
 ##### Get the closest waypoints
 
 The purpose of this section is to find the closest waypoint **in front of** the vehicle. Basically this function can find the index of the closest waypoint, then be well prepared to publish the waypoints to the final_waypoints topic.
 
 For more details please refer to the code below,I made some comments to the code
+
 ```
 def get_closest_waypoint_idx(self):
         # Get the coordinates of our car
@@ -189,17 +228,29 @@ def get_closest_waypoint_idx(self):
         return closest_idx
 ```
 
-The result is showing as below:
+The result is shown below:
 
 <img src="https://user-images.githubusercontent.com/40875720/55612987-22279b80-57bc-11e9-83e4-91e97e06c8ec.PNG" width="400">
 
 ### Control
 
-[TODO: DBW]
+The Drive-by-wire is implemented by to two modules; dbw_node.py and twist_controller.py. In dbw_node.py, we need to handle ROS subscribers for the /current_velocity, /twist_cmd, and /vehicle/dbw_enabled topics and publish throttle, steering and brake signals.
+
+The twist controller (including the imported yaw controller) manages to set the desired linear and angular velocity with the help of a PID controller which outputs the necessary actuator signals. We subscribe to the desired linear and angular velocity via the twist_cmd topic which is published by the Waypoint Follower Node.
+
+For the Break if the desired speed is less than 1 mph, 40% of the maximum break is applied, else if the actual car speed is less than 1 mph maximum break is applied 
+
 
 ## Results
+When all three vehicle subsystems are combined, the car was able to autonomously drive through the test track, stopping at red lights as needed. The results can be seen in the GIF below:
 
-[TODO: Results]
+![alt text][image2]
+
+## Limitations
+Overall, the project works very well with the only difficulties being related to development & testing in Udacity's provided project workspace. The main problems we faced were:
+
+* The project workspace does not have a lot of processing power, and this can result in severe simulator lag despite countless code optimizations which can cause the vehicle to veer from the waypoints.
+* Testing the bag file for the real world test was basically impossible in the workspace due to insufficient space to load the file.
 
 ## Basic Build Instructions
 
@@ -224,11 +275,13 @@ The result is showing as below:
 [Install Docker](https://docs.docker.com/engine/installation/)
 
 Build the docker container
+
 ```bash
 docker build . -t capstone
 ```
 
 Run the docker file
+
 ```bash
 docker run -p 4567:4567 -v $PWD:/capstone -v /tmp/log:/root/.ros/ --rm -it capstone
 ```
@@ -239,35 +292,44 @@ To set up port forwarding, please refer to the [instructions from term 2](https:
 ### Usage
 
 1. Clone the project repository
+
+
 ```bash
 git clone https://github.com/udacity/CarND-Capstone.git
 ```
 
 2. Install python dependencies
+
+
 ```bash
 cd CarND-Capstone
 pip install -r requirements.txt
 ```
 3. Make and run styx
+
+
 ```bash
-cd ros
-catkin_make
-source devel/setup.sh
-roslaunch launch/styx.launch
+./run.sh
 ```
 4. Run the simulator
 
 ### Real world testing
 1. Download [training bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) that was recorded on the Udacity self-driving car.
 2. Unzip the file
+
+
 ```bash
 unzip traffic_light_bag_file.zip
 ```
 3. Play the bag file
+
+
 ```bash
 rosbag play -l traffic_light_bag_file/traffic_light_training.bag
 ```
 4. Launch your project in site mode
+
+
 ```bash
 cd CarND-Capstone/ros
 roslaunch launch/site.launch
