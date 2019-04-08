@@ -34,7 +34,7 @@ The following image shows the architecture for Carla, Udacity's self driving car
 ### Perception
 The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is received it calculates if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processes at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is approaching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
 
-For the classification we trained separate networks for the detection on the simulated data and also the real data. The following data are used for the trainings:
+For the classification we trained separate networks for the detection on the simulated data and the real data. The following data are used for the trainings:
 
 1. For real data: [dataset sdcnd capstone](https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit), we've got the data from our colleague [Michael Karg](https://github.com/micjey/CarND-Capstone)
 2. For simulated data: [Dataset from Alex Lechner](https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0), please check his repository on https://github.com/alex-lechner
@@ -45,7 +45,7 @@ At first we tried to do the normal way in which the outputs of the network consi
 
 1. By splitting the output into 3 classes means that the detector could be more prone to error caused by a bad training data distribution, therefore it is in our opinion better to focus on only detecting where the traffic light is and let other classifier detect the color of the traffic light. In this case the proportion of unique training data in a class is also increased a lot, because we can merge all the green, red and yellow data into a single traffic light class.
 2. After we successfully identify the traffic light, we use a simple image processing to detect its color. First of all, the traffic images are cropped and resized to 32 by 32 pixels based on the detected position from the SSD network. Then the images are masked based on the hsv color and only the brightness channel is taken. After that, the image is splitted into 3 regions from top to the bottom (red, yellow, green). Some regions on the right and left sides are cropped to eliminate the background from the feature calculation. The calculated feature is the mean of brightness from each region where the region with the biggest mean is the region where the light is on. The followings are the image from HSV channels.
-![alt text](./traffic_hsv.png)
+![alt text](imgs/traffic_hsv.png)
 
 ### Planning
 
