@@ -43,8 +43,13 @@ class TLDetector(object):
         self.config = yaml.load(config_string)
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
-
-        graph_file = '../../../models/test_frozen_inference_graph_sim.pb'
+        
+        is_site = self.config['is_site']
+        if is_site:
+            graph_file = '../../../models/frozen_inference_graph_real_merged_130.pb'
+        else:
+            graph_file = '../../../models/frozen_inference_graph_traffic_130.pb'
+            
         self.graph = tensorflow.Graph()
 
         self.bridge = CvBridge()
