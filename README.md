@@ -10,9 +10,6 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 * Vehicle Control using Drive-by-Wire Systems
 * Path Planning by Updating and Following Waypoints
 
-#[//]: # (Image References)
-
-#[image1]: ./imgs/ros_architecture.png "ros_arch"
 ---
 
  
