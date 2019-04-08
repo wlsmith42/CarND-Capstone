@@ -16,7 +16,7 @@ The goals / steps of this project are to write ROS nodes to implement the core f
 [image2]: ./imgs/sim.gif "sim"
 ---
 
- 
+
 ## The Team
 
 ###Weston Smith
@@ -69,14 +69,46 @@ The following image shows the architecture for Carla, Udacity's self driving car
 ### Perception
 The perception subsystem consists of the traffic light detector and traffic light classifier. The traffic light detector is the ROS node that receives camera images from the vehicle. Once an image is received it calculates if the vehicle is close to a traffic light using a list of stop line positions that correspond to the line where the car should stop for a given intersection. Images are processed at a rate of 1 image classified per 5 images received as long as they meet the distance requirement to a traffic light; this greatly reduces system overhead and allows for better results when running the project on the simulator. If the vehicle is approaching a traffic light, the image is then passed on to the classifier to determine the state of the light: Red, Yellow, Green, or Unknown. Once the image class is determined, the state of the light is then published to the ROS topic `upcoming_red_light_pub` at the same rate that camera images are published. For a more information about the traffic light detector, check out the code at `/ros/src/tl_detector/tl_detector.py`
 
-For the classification we trained separate networks for the detection on the simulated data and also the real data. The following data are used for the trainings:
+We trained separate networks for the traffic light detection on the simulated data and the real data. The following data are used for the trainings:
 
-1. For real data: [dataset sdcnd capstone](https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit), we've got the data from our colleague [Michael Karg](https://github.com/micjey/CarND-Capstone)
-2. For simulated data: [Dataset from Alex Lechner](https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0), please check his repository at [alex-lechner](https://github.com/alex-lechner).
+1. For real data we used [dataset sdcnd capstone](https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/edit), we've got the data from our colleague [Michael Karg](https://github.com/micjey/CarND-Capstone)
+2. For simulated data we used [Dataset from Alex Lechner](https://www.dropbox.com/s/vaniv8eqna89r20/alex-lechner-udacity-traffic-light-dataset.zip?dl=0), please check his repository on https://github.com/alex-lechner
 
 We used SSD network which is recommended by [Object Detection Lab](https://github.com/udacity/CarND-Object-Detection-Lab) the version that we used is [SSD Inception V2 COCO 2017/11/17](http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz).
 
-At first we tried to do the normal way in which the outputs of the network are 3 classes: Green, Red, Yellow, however we noticed that the classification was very bad, even for detection on the training data itself. 
+At first we tried to do the normal way of detection and classification in which the outputs of the network are directly green, red, or yellow. However we noticed that the detection was very bad, even for detection on the training data itself. As a result we decided to do something else for the detection and classification:
+
+1. Splitting the output into 3 classes as before means that the detector could be more prone to error caused by a bad training data distribution, therefore it is in our opinion better to focus on only detecting where the traffic light is and let another classifier detect the color of the traffic light. In this case the proportion of unique training data in a class is also increased a lot, because we can merge all the green, red and yellow data into a single traffic light class.
+
+2. After we successfully identify the traffic light, we use a simple image processing to detect its color. First of all, the traffic images are cropped and resized to 32 by 32 pixels based on the detected position from the SSD network. Then the images are masked based on the hsv color and only the brightness channel is taken. After that, the image is splitted into 3 regions from top to the bottom (red, yellow, green). Some regions on the right and left sides are cropped to eliminate the background from the feature calculation. The calculated feature is the mean of brightness from each region where the region with the biggest mean is the region where the light is on. The followings are the image from HSV channels.
+
+![traffic hsv](imgs/traffic_hsv.png)
+
+The following is the code snippet from the feature extraction:
+
+```
+def create_feature(self,rgb_image):
+
+        #Convert image to HSV color space
+        hsv = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2HSV)
+
+        #Create and return a feature value and/or vector
+        brightness_channel = hsv[:,:,2]
+        rows = brightness_channel.shape[0]
+        cols = brightness_channel.shape[1]
+        mid = int(cols/2)
+
+        red_region = brightness_channel[:int(rows/3),(mid-10):(mid+10)]
+        yellow_region = brightness_channel[int(rows/3):int(2*rows/3),(mid-10):(mid+10)]
+        green_region = brightness_channel[int(2*rows/3):,(mid-10):(mid+10)]
+
+        feature = [0,0,0]
+        feature[0] = np.mean(green_region)
+        feature[1] = np.mean(red_region)
+        feature[2] = np.mean(yellow_region)
+
+        return feature
+```
 
 ### Planning
 
@@ -128,7 +160,7 @@ rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
 def waypoints_cb(self, waypoints):
         #Get the basic waypoints from waypoint loader.This action only need to be done once
         self.base_waypoints = waypoints
-	
+
         #Got 2d waypoints from 3d waypoints
         if not self.waypoints_2d:
 	     # Only take x and y in to consideration to get 2D waypoints
@@ -147,7 +179,7 @@ rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
 def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
         self.stopline_wp_idx = msg.data
-	
+
 ```
 
 ##### Deceleration waypoints
@@ -166,10 +198,10 @@ def decelerate_waypoints(self, waypoints, closest_idx):
         for i, wp in enumerate(waypoints):
             new_point = Waypoint()
             new_point.pose = wp.pose
-	    
+
 	    # Should stop in front of the stop line, otherwise it will be dangerous to break law
             stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0)  
-	    
+
             # the car stops at the line
             dist = self.distance(waypoints, i, stop_idx)
             vel = math.sqrt(2 * MAX_DECEL * SAFETY_FACTOR * dist)
@@ -208,7 +240,7 @@ def get_closest_waypoint_idx(self):
         # Get the coordinates of our car
         x = self.pose.pose.position.x
         y = self.pose.pose.position.y
-	
+
         # Get the index of the closest point
         closest_idx = self.waypoint_tree.query([x, y], 1)[1]
 
@@ -238,7 +270,7 @@ The Drive-by-wire is implemented by to two modules; dbw_node.py and twist_contro
 
 The twist controller (including the imported yaw controller) manages to set the desired linear and angular velocity with the help of a PID controller which outputs the necessary actuator signals. We subscribe to the desired linear and angular velocity via the twist_cmd topic which is published by the Waypoint Follower Node.
 
-For the Break if the desired speed is less than 1 mph, 40% of the maximum break is applied, else if the actual car speed is less than 1 mph maximum break is applied 
+For the Break if the desired speed is less than 1 mph, 40% of the maximum break is applied, else if the actual car speed is less than 1 mph maximum break is applied
 
 
 ## Results
