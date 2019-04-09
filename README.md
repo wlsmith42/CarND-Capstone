@@ -276,10 +276,9 @@ When all three vehicle subsystems are combined, the car was able to autonomously
 ![sim](imgs/sim.gif)
 
 ## Limitations
-Overall, the project works very well with the only difficulties being related to development & testing in Udacity's provided project workspace. The main problems we faced were:
+Overall, the project works very well with the only difficulties being related to development & testing in Udacity's provided project workspace. The main problem we faced was:
 
 * The project workspace does not have a lot of processing power, and this can result in severe simulator lag despite countless code optimizations which can cause the vehicle to veer from the waypoints.
-* Testing the bag file for the real world test was basically impossible in the workspace due to insufficient space to load the file.
 
 ## Basic Build Instructions
 
@@ -343,24 +342,17 @@ pip install -r requirements.txt
 4. Run the simulator
 
 ### Real world testing
-1. Download [training bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) that was recorded on the Udacity self-driving car.
-2. Unzip the file
 
+If you are using the Udacity workspace, steps 1 & 2 will need to be completed in the `/opt` directory so as not to exceed the 2GB limit in `/home/workspace`.
 
-```bash
-unzip traffic_light_bag_file.zip
-```
-3. Play the bag file
+1. Download [training bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) that was recorded on the Udacity self-driving car and [rviz config](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/default.rviz) to run the results using rviz.
 
+2. Unzip the file: `unzip traffic_light_bag_file.zip`
 
-```bash
-rosbag play -l traffic_light_bag_file/traffic_light_training.bag
-```
-4. Launch your project in site mode
+3. Start `roscore`
 
+4. Play the bag file using `rosbag play -l traffic_light_bag_file/traffic_light_training.bag`
 
-```bash
-cd CarND-Capstone/ros
-roslaunch launch/site.launch
-```
-5. Confirm that traffic light detection works on real life images
+5. Launch rviz to view the results using `rviz`
+
+6. View the results from the car's sensors during testing.
