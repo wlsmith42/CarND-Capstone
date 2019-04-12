@@ -275,6 +275,14 @@ When all three vehicle subsystems are combined, the car was able to autonomously
 
 ![sim](imgs/sim.gif)
 
+After submitting the project, Udacity tested our code on their own self-driving car, Carla. Our project was able to successfully navigate carla around the test track, stopping at the red light and smoothly steering through a curve. The GIF below shows an in-car view of our code autonomously driving Carla:
+
+![carla](imgs/carla.gif)
+
+Udacity's feedback also included data from the Carla's sensors which are shown in the GIF below:
+
+![bag](imgs/rosbag.gif)
+
 ## Limitations
 Overall, the project works very well with the only difficulties being related to development & testing in Udacity's provided project workspace. The main problem we faced was:
 
