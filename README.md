@@ -77,11 +77,11 @@ At first we tried to do the normal way of detection and classification in which 
 
 1. Splitting the output into 3 classes as before means that the detector could be more prone to error caused by a bad training data distribution, therefore it is in our opinion better to focus on only detecting where the traffic light is and let another classifier detect the color of the traffic light. In this case the proportion of unique training data in a class is also increased a lot, because we can merge all the green, red and yellow data into a single traffic light class.
 
-2. After we successfully identify the traffic light, we use a simple image processing to detect its color. First of all, the traffic images are cropped and resized to 32 by 32 pixels based on the detected position from the SSD network. Then the images are masked based on the hsv color and only the brightness channel is taken. After that, the image is splitted into 3 regions from top to the bottom (red, yellow, green). Some regions on the right and left sides are cropped to eliminate the background from the feature calculation. The calculated feature is the mean of brightness from each region where the region with the biggest mean is the region where the light is on. In our opinion, with this approach the classification of the traffic light is not only more robust with small dataset but also the behavious is more deterministic. The followings are an example image of HSV channels.
+2. After we successfully identify the traffic light, we use a simple image processing to extract its color features. First, the traffic images are cropped and resized to 32 by 32 pixels based on the position detected by the SSD network. Then the images are masked based on the hsv color and only the brightness channel is taken. After that, the image is splitted into 3 regions from top to the bottom (red, yellow, green). Some regions on the right and left sides are cropped to eliminate the background from the feature calculation. The calculated feature is the mean of brightness from each region where the region with the biggest mean is the region where the light is on. In our opinion, with this approach the classification of the traffic light is not only more robust with small dataset but also the algorithm behaviour is more deterministic. The followings are examples of HSV channels.
 
 ![traffic hsv](imgs/traffic_hsv.png)
 
-The following is the code snippet from the feature extraction:
+The following is the code snippet for the feature extraction:
 
 ```
 def create_feature(self,rgb_image):
